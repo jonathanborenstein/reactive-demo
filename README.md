@@ -2,6 +2,8 @@
 
 This is a demo of the Spring WebFlux module including the WebClient, with a bit of Spring Data and Spring Integration involved as well.
 
+UPDATE: I've added the use of the Spring Reactive MongoDB. So to run the demo, first run reactive-mongo and then run reactive-client. reactive-mongo is using an embedded MongoDB database so you don't have to connect to one on your machine.
+
 First run the reactive-sse application and in your browser go to localhost:8080/person to see Server Sent Events of Flux<List<Person>>, which is generated from the getAllPersons() method.
 
 Go to the localhost:8080/sink endpoint next to see the same thing except this time the Server Sent Events are being sent using Spring IntegrationFlow, which is polling an H2 in memory database.
