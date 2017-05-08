@@ -32,7 +32,7 @@ public class ReactiveClientApplication {
 
 			client.post()
 			.uri("/post")
-			.body(new Person("Dave"))
+			.syncBody(new Person("Dave"))
 			.exchange()
 			.subscribe();
 
@@ -40,7 +40,7 @@ public class ReactiveClientApplication {
 			
 			client.post()
 			.uri("/post")
-			.body(new Person("Maria"))
+			.syncBody(new Person("Maria"))
 			.exchange()
 			.subscribe();
 			

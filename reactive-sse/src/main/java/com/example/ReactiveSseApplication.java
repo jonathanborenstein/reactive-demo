@@ -50,11 +50,6 @@ public class ReactiveSseApplication {
 	}
 
 	private final Log log = LogFactory.getLog(getClass());
-
-	@Bean
-	SubscribableChannel channel() {
-		return MessageChannels.publishSubscribe().get();
-	}
 	
 	@Bean
 	CommandLineRunner demo (){
@@ -67,9 +62,9 @@ public class ReactiveSseApplication {
 	
 	@GetMapping(value = "/person", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
 	Flux<List<Person>> getAllPersons() {
-		Flux<List<Person>> eventFlux = Flux.fromStream(Stream.generate(() -> personRepository.findAll()));
+		Flux<List<Person>> personFlux = Flux.fromStream(Stream.generate(() -> personRepository.findAll()));
 		Flux<Long> durationFlux = Flux.interval(Duration.ofSeconds(1));
-		return Flux.zip(eventFlux, durationFlux).map(Tuple2::getT1);
+		return Flux.zip(personFlux, durationFlux).map(Tuple2::getT1);
 	}
 	
 	@GetMapping(value = "/sink", produces = MediaType.TEXT_EVENT_STREAM_VALUE)

@@ -34,7 +34,6 @@ public class ReactiveMongoApplication {
 	
 	private List<String> list = new ArrayList<String>();
 
-
 	public ReactiveMongoApplication(PersonRepository personRepository) {
 		this.personRepository = personRepository;
 	}
@@ -45,9 +44,9 @@ public class ReactiveMongoApplication {
 	CommandLineRunner demo (){
 		return args -> {
 			
-			personRepository.save(new Person("Jon")).block();
-			personRepository.save(new Person("Joe")).block();
-			personRepository.save(new Person("Jane")).block();
+			personRepository.save(new Person("Jon")).subscribe();
+			personRepository.save(new Person("Joe")).subscribe();
+			personRepository.save(new Person("Jane")).subscribe();
 			
 			list.add("Jon");
 			list.add("Joe");
@@ -57,17 +56,22 @@ public class ReactiveMongoApplication {
 
 	@GetMapping(value = "/person", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
 	Flux<Person> getAllPersons() {
-		Flux<Person> eventFlux = Flux.fromStream(Stream.generate(() -> 
+		Flux<Person> personFlux = Flux.fromStream(Stream.generate(() -> 
 			personRepository.findByName(list.get(new Random().nextInt(list.size()))).block()));
 		Flux<Long> durationFlux = Flux.interval(Duration.ofSeconds(1));
-		return Flux.zip(eventFlux, durationFlux).map(Tuple2::getT1);
+		return Flux.zip(personFlux, durationFlux).map(Tuple2::getT1);
 	}
 
 
 	@PostMapping("/post")
 	void savePerson(@RequestBody Person person) {
-		personRepository.save(person).block();
+		personRepository.save(person).subscribe();
 		list.add(person.getName());
+	}
+	
+	@GetMapping("/all")
+	Flux<Person> findAllPersons() {
+		return personRepository.findAll();
 	}
 
 
